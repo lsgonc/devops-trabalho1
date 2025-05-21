@@ -1,0 +1,6 @@
+apiVersion: v2
+name: angular
+appVersion: "1.0"
+description: Trabalho1 Angular Application
+version: 1.0.0
+type: application

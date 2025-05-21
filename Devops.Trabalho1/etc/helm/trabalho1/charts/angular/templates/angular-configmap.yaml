@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-configmap
+data:
+  dynamic-env.json: |-
+    {
+        "production": "true",
+        "application": {
+            "baseUrl": "{{ include "trabalho1.hosts.angular" . }}",
+            "name": "Trabalho1",
+            "logoUrl": ""
+        },
+        "oAuthConfig": {
+            "issuer": "{{ include "trabalho1.hosts.authserver" . }}",
+            "redirectUri": "{{ include "trabalho1.hosts.angular" . }}",
+            "requireHttps": "true",
+            "clientId": "Trabalho1_App",
+            "responseType": "code",
+            "scope": "offline_access Trabalho1",
+            "strictDiscoveryDocumentValidation": false,
+            "skipIssuerCheck": true
+        },
+        "apis": {
+            "default": {
+                "url": "{{ include "trabalho1.hosts.httpapi" . }}",
+                "rootNamespace": "Devops.Trabalho1"
+            }
+        }
+    }

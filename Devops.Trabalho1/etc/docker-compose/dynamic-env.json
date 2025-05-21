@@ -1,0 +1,25 @@
+{
+  "production": true,
+  "application": {
+    "baseUrl":"http://localhost:4200",
+    "name": "Trabalho1",
+    "logoUrl": ""
+  },
+  "oAuthConfig": {
+    "issuer": "https://localhost:44348/",
+    "redirectUri": "http://localhost:4200",
+    "clientId": "Trabalho1_App",
+    "responseType": "code",
+    "scope": "offline_access openid profile email phone Trabalho1"
+  },
+  "apis": {
+    "default": {
+      "url": "https://localhost:44321",
+      "rootNamespace": "Trabalho1"
+    },
+    "AbpAccountPublic": {
+      "url": "https://localhost:44348",
+      "rootNamespace": "AbpAccountPublic"
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "4.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.TextTemplateManagement": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.LanguageManagement": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.OpenIddict.Pro": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.Gdpr": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.AuditLogging.Pro": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Saas": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.Identity.Pro": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.Account.Pro": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "9.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "9.1.1",
+      "isInstalled": true
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Devops.Trabalho1.Application": {
+      "path": "src/Devops.Trabalho1.Application/Devops.Trabalho1.Application.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.Application.Tests": {
+      "path": "test/Devops.Trabalho1.Application.Tests/Devops.Trabalho1.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Devops.Trabalho1.Domain.Shared": {
+      "path": "src/Devops.Trabalho1.Domain.Shared/Devops.Trabalho1.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.Application.Contracts": {
+      "path": "src/Devops.Trabalho1.Application.Contracts/Devops.Trabalho1.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.HttpApi": {
+      "path": "src/Devops.Trabalho1.HttpApi/Devops.Trabalho1.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.HttpApi.Client": {
+      "path": "src/Devops.Trabalho1.HttpApi.Client/Devops.Trabalho1.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.AuthServer": {
+      "path": "src/Devops.Trabalho1.AuthServer/Devops.Trabalho1.AuthServer.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.HttpApi.Host": {
+    "path": "src/Devops.Trabalho1.HttpApi.Host/Devops.Trabalho1.HttpApi.Host.abppkg",
+    "folder": "src"
+    },
+    "Devops.Trabalho1.EntityFrameworkCore.Tests": {
+      "path": "test/Devops.Trabalho1.EntityFrameworkCore.Tests/Devops.Trabalho1.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Devops.Trabalho1.EntityFrameworkCore": {
+      "path": "src/Devops.Trabalho1.EntityFrameworkCore/Devops.Trabalho1.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.TestBase": {
+      "path": "test/Devops.Trabalho1.TestBase/Devops.Trabalho1.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Devops.Trabalho1.Domain.Tests": {
+      "path": "test/Devops.Trabalho1.Domain.Tests/Devops.Trabalho1.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Devops.Trabalho1.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Devops.Trabalho1.HttpApi.Client.ConsoleTestApp/Devops.Trabalho1.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "Devops.Trabalho1.DbMigrator": {
+      "path": "src/Devops.Trabalho1.DbMigrator/Devops.Trabalho1.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "Devops.Trabalho1.Domain": {
+      "path": "src/Devops.Trabalho1.Domain/Devops.Trabalho1.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}
