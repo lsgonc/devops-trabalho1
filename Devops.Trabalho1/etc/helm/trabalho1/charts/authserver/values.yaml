@@ -1,4 +1,0 @@
-image:
-  repository: "trabalho1/authserver"
-  tag: "latest"
-  pullPolicy: IfNotPresent

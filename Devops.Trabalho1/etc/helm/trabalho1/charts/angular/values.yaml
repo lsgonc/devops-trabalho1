@@ -1,4 +1,0 @@
-image:
-  repository: "trabalho1/angular"
-  tag: "latest"
-  pullPolicy: IfNotPresent

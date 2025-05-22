@@ -1,4 +1,0 @@
-image:
-  repository: "trabalho1/httpapihost"
-  tag: "latest"
-  pullPolicy: IfNotPresent
