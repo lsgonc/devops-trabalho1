@@ -3,8 +3,8 @@ services:
     image: devops/trabalho1-angular:latest
     container_name: trabalho1-angular
     build:
-      context: ../../
-      dockerfile: angular/Dockerfile.local
+      context: ../../angular/
+      dockerfile: Dockerfile.local
     ports:
       - "4200:80"
     depends_on:
@@ -42,8 +42,6 @@ services:
       redis:
         condition: service_healthy
     restart: on-failure    
-    volumes:
-      - ./certs:/app/certs
     networks:
       - abp-network
   
@@ -72,8 +70,6 @@ services:
       redis:
         condition: service_healthy
     restart: on-failure
-    volumes:
-      - ./certs:/app/certs
     networks:
       - abp-network
 
