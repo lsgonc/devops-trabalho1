@@ -5,6 +5,13 @@ WORKDIR /src
 # Copiar arquivos do projeto
 COPY . .
 
+# Instala o Nodejs
+# Instalar Node.js para o npm
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs
+
+RUN cd src/Devops.Trabalho1.AuthServer/ && npm install 
+
 # Gerar certificados durante o build
 RUN dotnet dev-certs https -v -ep openiddict.pfx -p 714df2e0-beab-4d73-ab27-545f96ad72ee
 RUN chmod 644 openiddict.pfx
