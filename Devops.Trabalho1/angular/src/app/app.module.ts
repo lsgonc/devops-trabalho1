@@ -43,6 +43,7 @@ import { APP_ROUTE_PROVIDER } from './route.provider';
     SideMenuLayoutModule.forRoot(),
   ],
   providers: [
+    provideAbpThemeShared(),
     DocumentDirHandlerService,
     APP_ROUTE_PROVIDER,
     provideAbpCore(
