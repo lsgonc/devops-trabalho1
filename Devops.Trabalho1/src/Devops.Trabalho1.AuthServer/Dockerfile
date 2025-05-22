@@ -5,12 +5,19 @@ WORKDIR /src
 # Copiar arquivos do projeto
 COPY . .
 
-# Instala o Nodejs
-# Instalar Node.js para o npm
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get install -y nodejs
+# Instala o ABP CLI globalmente
+RUN dotnet tool install -g Volo.Abp.Studio.Cli
 
-RUN cd src/Devops.Trabalho1.AuthServer/ && npm install 
+# Configura o PATH permanentemente para incluir as ferramentas do dotnet
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+#Instala o nodejs, yarn e o Abp Cli
+RUN apt install -y curl
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+
+# Configura o nvm, instala o Node.js 22 e habilita o yarn
+RUN . /root/.nvm/nvm.sh && nvm install 22 && corepack enable yarn && cd src/Devops.Trabalho1.AuthServer/ && abp install-libs --verbose
+
 
 # Gerar certificados durante o build
 RUN dotnet dev-certs https -v -ep openiddict.pfx -p 714df2e0-beab-4d73-ab27-545f96ad72ee
