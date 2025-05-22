@@ -4,7 +4,7 @@ services:
     container_name: trabalho1-angular
     build:
       context: ../../angular/
-      dockerfile: Dockerfile.local
+      dockerfile: Dockerfile
     ports:
       - "4200:80"
     depends_on:
@@ -20,7 +20,7 @@ services:
     hostname: trabalho1-api
     build:
       context: ../../
-      dockerfile: src/Devops.Trabalho1.HttpApi.Host/Dockerfile.local
+      dockerfile: src/Devops.Trabalho1.HttpApi.Host/Dockerfile
     environment:
       - ASPNETCORE_URLS=https://+:8081;http://+:8080;
       - Kestrel__Certificates__Default__Path=/app/certs/localhost.pfx
@@ -50,7 +50,7 @@ services:
     container_name: trabalho1-authserver
     build:
       context: ../../
-      dockerfile: src/Devops.Trabalho1.AuthServer/Dockerfile.local
+      dockerfile: src/Devops.Trabalho1.AuthServer/Dockerfile
     environment:
       - ASPNETCORE_URLS=https://+:8081;http://+:8080;
       - App__SelfUrl=https://localhost:44348
@@ -78,7 +78,7 @@ services:
     container_name: db-migrator
     build:
       context: ../../
-      dockerfile: src/Devops.Trabalho1.DbMigrator/Dockerfile.local
+      dockerfile: src/Devops.Trabalho1.DbMigrator/Dockerfile
     environment:
       - OpenIddict__Applications__Trabalho1_App__RootUrl=http://localhost:4200
       - OpenIddict__Applications__Trabalho1_Swagger__RootUrl=https://localhost:44321
