@@ -266,8 +266,6 @@ src/Devops.Trabalho1.DbMigrator/Logs/*
 src/Devops.Trabalho1.Blazor.Server/Logs/*
 src/Devops.Trabalho1.Blazor.Server.Tiered/Logs/*
 
-# Use abp install-libs to restore.
-**/wwwroot/libs/*
 
 # IdentityServer temp files
 tempkey.rsa
