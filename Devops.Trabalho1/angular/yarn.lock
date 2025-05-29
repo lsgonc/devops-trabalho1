@@ -2,6 +2,24 @@
 # yarn lockfile v1
 
 
+"@abp/ng.account.core@~9.1.3":
+  version "9.1.3"
+  resolved "https://registry.yarnpkg.com/@abp/ng.account.core/-/ng.account.core-9.1.3.tgz#86d97890b558f97c611ba1d391c8fa043037f00c"
+  integrity sha512-nY2RhlOCe1uBkMqe1+LCQ/ipFWNKL1s1rWuiigpVVjbw8Tg7gmngnTFP3MWLImgqv+ucyrwCKhhUu70j/pzUYA==
+  dependencies:
+    "@abp/ng.core" "~9.1.3"
+    "@abp/ng.theme.shared" "~9.1.3"
+    tslib "^2.0.0"
+
+"@abp/ng.account@^9.1.3":
+  version "9.1.3"
+  resolved "https://registry.yarnpkg.com/@abp/ng.account/-/ng.account-9.1.3.tgz#a79d3a58e6c6f64545f532c3b1a4bc32ad0a54eb"
+  integrity sha512-4oaenqhYFDK4PjJrVw+Za1sT6a5AqcNCsnQNAAbXHubqi+b3SFRnLvfex22Auo+BWjuOkzgNHwOHSRerD/QiVA==
+  dependencies:
+    "@abp/ng.account.core" "~9.1.3"
+    "@abp/ng.theme.shared" "~9.1.3"
+    tslib "^2.0.0"
+
 "@abp/ng.components@~9.1.1", "@abp/ng.components@~9.1.3":
   version "9.1.3"
   resolved "https://registry.yarnpkg.com/@abp/ng.components/-/ng.components-9.1.3.tgz#897d643f539a88fb21f264a2ae2dfedf69918217"

@@ -3,13 +3,13 @@ import { Environment } from '@abp/ng.core';
 const baseUrl = 'http://localhost:4200';
 
 const oAuthConfig = {
-  issuer: 'https://localhost:44348/',
+  issuer: 'http://localhost:8080/',
   redirectUri: baseUrl,
   clientId: 'Trabalho1_App',
+  dummyClientSecret: '1q2w3e*',
   responseType: 'code',
-  scope: 'offline_access Trabalho1',
-  requireHttps: true,
-  impersonation: {
+    scope: 'openid offline_access Trabalho1',
+    impersonation: {
     tenantImpersonation: true,
     userImpersonation: true,
   }
@@ -24,7 +24,7 @@ export const environment = {
   oAuthConfig,
   apis: {
     default: {
-      url: 'https://localhost:44321',
+      url: '',
       rootNamespace: 'Devops.Trabalho1',
     },
     AbpAccountPublic: {

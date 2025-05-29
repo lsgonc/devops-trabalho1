@@ -41,6 +41,7 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.Studio.Client.AspNetCore;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Devops.Trabalho1;
 
@@ -144,6 +145,18 @@ public class Trabalho1HttpApiHostModule : AbpModule
                 options.Authority = configuration["AuthServer:Authority"];
                 options.RequireHttpsMetadata = configuration.GetValue<bool>("AuthServer:RequireHttpsMetadata");
                 options.Audience = "Trabalho1";
+
+                options.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidIssuers = new[] { configuration["AuthServer:Authority"]!.EnsureEndsWith('/') },
+                SignatureValidator = delegate (string token, TokenValidationParameters parameters)
+                {
+                    var jwt = new Microsoft.IdentityModel.JsonWebTokens.JsonWebToken(token);
+                    return jwt;
+                }
+            };  
+
+
             });
 
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
