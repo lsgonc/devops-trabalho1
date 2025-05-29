@@ -4,15 +4,9 @@ const baseUrl = 'http://localhost:4200';
 
 const oAuthConfig = {
   issuer: 'http://localhost:8080/',
-  redirectUri: baseUrl,
   clientId: 'Trabalho1_App',
-  dummyClientSecret: '1q2w3e*',
-  responseType: 'code',
-    scope: 'openid offline_access Trabalho1',
-    impersonation: {
-    tenantImpersonation: true,
-    userImpersonation: true,
-  }
+  dummyClientSecret: '',
+  scope: 'offline_access Trabalho1',
 };
 
 export const environment = {

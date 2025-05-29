@@ -4,11 +4,8 @@ const baseUrl = 'http://localhost:4200';
 
 const oAuthConfig = {
   issuer: 'https://localhost:44348/',
-  redirectUri: baseUrl,
   clientId: 'Trabalho1_App',
-  responseType: 'code',
   scope: 'offline_access Trabalho1',
-  requireHttps: true,
   impersonation: {
     tenantImpersonation: true,
     userImpersonation: true,
