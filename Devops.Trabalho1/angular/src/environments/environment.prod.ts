@@ -26,9 +26,5 @@ export const environment = {
       url: oAuthConfig.issuer,
       rootNamespace: 'AbpAccountPublic',
     },
-  },
-  remoteEnv: {
-    url: '/getEnvConfig',
-    mergeStrategy: 'deepmerge'
   }
 } as Environment;
