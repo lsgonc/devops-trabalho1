@@ -23,9 +23,6 @@ RUN . /root/.nvm/nvm.sh && nvm install 22 && corepack enable yarn && cd src/Devo
 RUN dotnet dev-certs https -v -ep openiddict.pfx -p 714df2e0-beab-4d73-ab27-545f96ad72ee
 RUN chmod 644 openiddict.pfx
 
-RUN dotnet dev-certs https -v -ep localhost.pfx -p 186744b5-efac-4578-8b34-fb823c44ae8a -t
-RUN chmod 644 localhost.pfx
-
 # Publicar a aplicação
 RUN dotnet publish "src/Devops.Trabalho1.AuthServer/" -c Release -o /app/publish
 
@@ -36,7 +33,6 @@ WORKDIR /app
 # Copiar os arquivos publicados
 COPY --from=build /app/publish .
 # Copiar os certificados
-COPY --from=build /src/localhost.pfx ./certs/
 COPY --from=build /src/openiddict.pfx .
 
 # Expor as portas

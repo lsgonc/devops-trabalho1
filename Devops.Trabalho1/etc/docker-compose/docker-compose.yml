@@ -5,8 +5,10 @@ services:
     build:
       context: ../../angular/
       dockerfile: Dockerfile
+    volumes:
+      - ./certs:/etc/ssl/
     ports:
-      - "4200:80"
+      - "4200:443"
     networks:
       - abp-network
     depends_on:
@@ -23,16 +25,18 @@ services:
     environment:
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
       - Kestrel__Certificates__Default__Path=/app/certs/localhost.pfx
-      - Kestrel__Certificates__Default__Password=186744b5-efac-4578-8b34-fb823c44ae8a
-      - App__SelfUrl=http://trabalho1-api:8080
-      - App__AngularUrl=http://localhost:4200
-      - App__CorsOrigins=http://trabalho1-authserver:8080,http://localhost:8080 http://trabalho1-angular:80,http://localhost:4200
+      - Kestrel__Certificates__Default__Password=1234
+      - App__SelfUrl=https://trabalho1-api:8081
+      - App__AngularUrl=https://trabalho1-angular:443
+      - App__CorsOrigins=https://trabalho1-authserver:8081,https://localhost:8081,https://trabalho1-angular:443,https://localhost:4200
       - App__HealthCheckUrl=http://trabalho1-api:8080/health-status
-      - AuthServer__RequireHttpsMetadata=false
-      - AuthServer__Authority=http://localhost:8080
-      - AuthServer__MetaAddress=http://localhost:8080
+      - AuthServer__RequireHttpsMetadata=true
+      - AuthServer__Authority=https://localhost:443
+      - AuthServer__MetaAddress=https://trabalho1-authserver:8081
       - ConnectionStrings__Default=User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=Trabalho1;Pooling=false
       - Redis__Configuration=redis
+    volumes:
+      - ./certs/localhost.pfx:/app/certs/localhost.pfx
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,23 +49,23 @@ services:
   trabalho1-authserver:
     image: devops/trabalho1-authserver:latest
     container_name: trabalho1-authserver
-    ports:
-      - "8080:8080"  # Expondo a porta HTTP
     build:
       context: ../../
       dockerfile: src/Devops.Trabalho1.AuthServer/Dockerfile
     environment:
       - ASPNETCORE_URLS=https://+:8081;http://+:8080
-      - App__SelfUrl=http://localhost:8080
-      - App__CorsOrigins=http://trabalho1-angular:80,http://trabalho1-api:8080,http://localhost:4200
+      - App__SelfUrl=https://trabalho1-authserver:8081
+      - App__CorsOrigins=https://trabalho1-angular:443,https://trabalho1-api:8081,https://localhost:4200
       - App__HealthCheckUrl=http://trabalho1-authserver:8080/health-status
-      - App__AngularUrl=http://localhost:4200
-      - AuthServer__RequireHttpsMetadata=false
-      - AuthServer__Authority=http://localhost:8080
+      - App__AngularUrl=https://trabalho1-angular:443
+      - AuthServer__RequireHttpsMetadata=true
+      - AuthServer__Authority=https://localhost:4200/
       - Kestrel__Certificates__Default__Path=/app/certs/localhost.pfx
-      - Kestrel__Certificates__Default__Password=186744b5-efac-4578-8b34-fb823c44ae8a
+      - Kestrel__Certificates__Default__Password=1234
       - ConnectionStrings__Default=User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=Trabalho1;Pooling=false
       - Redis__Configuration=redis
+    volumes:
+      - ./certs/localhost.pfx:/app/certs/localhost.pfx
     depends_on:
       postgres:
         condition: service_healthy

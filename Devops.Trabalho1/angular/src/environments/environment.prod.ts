@@ -1,12 +1,13 @@
 import { Environment } from '@abp/ng.core';
 
-const baseUrl = 'http://localhost:4200';
+const baseUrl = 'https://localhost:4200';
 
 const oAuthConfig = {
-  issuer: 'http://localhost:8080/',
+  issuer: 'https://localhost:4200/',
   clientId: 'Trabalho1_App',
   dummyClientSecret: '',
   scope: 'offline_access Trabalho1',
+  strictDiscoveryDocumentValidation: false
 };
 
 export const environment = {

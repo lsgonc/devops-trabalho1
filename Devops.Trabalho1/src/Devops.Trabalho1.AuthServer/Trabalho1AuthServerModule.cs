@@ -56,6 +56,7 @@ using Microsoft.Extensions.Configuration;
 using Volo.Abp.Account.Localization;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Studio.Client.AspNetCore;
+using System.Net;
 
 namespace Devops.Trabalho1;
 
@@ -98,7 +99,7 @@ public class Trabalho1AuthServerModule : AbpModule
             });
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
-            {
+            {      
                 serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", configuration["AuthServer:CertificatePassPhrase"]!);
                 serverBuilder.SetIssuer(new Uri(configuration["AuthServer:Authority"]!));
             });
@@ -125,7 +126,11 @@ public class Trabalho1AuthServerModule : AbpModule
             
             Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedFor;
+
+                options.KnownProxies.Clear();
+                options.KnownNetworks.Clear();
+                
             });
         }
 

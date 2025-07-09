@@ -10,12 +10,10 @@ RUN dotnet publish "src/Devops.Trabalho1.HttpApi.Host/" -c Release -o /app/publi
 
 # Gerar certificados HTTPS
 RUN mkdir -p /app/publish/certs && \
-    # Certificado localhost (em /certs)
-    dotnet dev-certs https -v -ep /app/publish/certs/localhost.pfx -p 186744b5-efac-4578-8b34-fb823c44ae8a -t && \
     # Certificado OpenIDDict (na raiz)
     dotnet dev-certs https -v -ep /app/publish/openiddict.pfx -p 714df2e0-beab-4d73-ab27-545f96ad72ee && \
     # Ajustar permissões
-    chmod 644 /app/publish/certs/localhost.pfx /app/publish/openiddict.pfx
+    chmod 644 /app/publish/openiddict.pfx
 
 # Estágio final (runtime)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
@@ -33,7 +31,6 @@ USER appuser
 COPY --from=build --chown=appuser:appuser /app/publish .
 # Copiar certificados separadamente para locais diferentes
 COPY --from=build --chown=appuser:appuser /app/publish/openiddict.pfx .
-COPY --from=build --chown=appuser:appuser /app/publish/certs/localhost.pfx ./certs/
 
 # Expor as portas
 EXPOSE 8080
