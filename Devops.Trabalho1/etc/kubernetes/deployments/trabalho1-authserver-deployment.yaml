@@ -27,6 +27,8 @@ spec:
           value: "http://trabalho1-authserver:8080/health-status"
         - name: App__AngularUrl
           value: "https://k8s.local:31475/"
+        - name: App__RedirectAllowedUrls
+          value: "https://k8s.local:31475/"
         - name: AuthServer__RequireHttpsMetadata
           value: "true"
         - name: AuthServer__Authority

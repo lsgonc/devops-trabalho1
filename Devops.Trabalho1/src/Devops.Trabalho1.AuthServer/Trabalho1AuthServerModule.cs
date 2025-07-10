@@ -249,7 +249,7 @@ public class Trabalho1AuthServerModule : AbpModule
         
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
-            options.IsDynamicClaimsEnabled = true;
+            options.IsDynamicClaimsEnabled = false;
         });
         
         context.Services.AddAuthentication()

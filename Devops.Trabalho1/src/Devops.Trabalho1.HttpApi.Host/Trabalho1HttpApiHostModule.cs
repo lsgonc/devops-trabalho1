@@ -161,7 +161,7 @@ public class Trabalho1HttpApiHostModule : AbpModule
 
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
-            options.IsDynamicClaimsEnabled = true;
+            options.IsDynamicClaimsEnabled = false;
         });
     }
 

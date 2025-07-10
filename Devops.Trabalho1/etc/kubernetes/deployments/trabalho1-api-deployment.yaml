@@ -31,7 +31,7 @@ spec:
             - name: App__SelfUrl
               value: "https://trabalho1-api:8081"
             - name: App__AngularUrl
-              value: "https://trabalho1-angular:443"
+              value: "https://k8s.local:31475/"
             - name: App__CorsOrigins
               value: "https://trabalho1-authserver:8081,https://localhost:8081,https://trabalho1-angular:443,https://localhost:4200"
             - name: App__HealthCheckUrl
@@ -39,7 +39,7 @@ spec:
             - name: AuthServer__RequireHttpsMetadata
               value: "true"
             - name: AuthServer__Authority
-              value: "https://localhost:443"
+              value: "https://k8s.local:31475/"
             - name: AuthServer__MetaAddress
               value: "https://trabalho1-authserver:8081"
             - name: ConnectionStrings__Default
