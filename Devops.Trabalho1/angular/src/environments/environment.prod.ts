@@ -1,13 +1,15 @@
 import { Environment } from '@abp/ng.core';
 
-const baseUrl = 'https://localhost:4200';
+const baseUrl = 'https://k8s.local:31475';
 
 const oAuthConfig = {
-  issuer: 'https://localhost:4200/',
+  issuer: 'https://k8s.local:31475/',
+  redirectUrl: 'https://k8s.local:31475',
   clientId: 'Trabalho1_App',
   dummyClientSecret: '',
   scope: 'offline_access Trabalho1',
-  strictDiscoveryDocumentValidation: false
+  strictDiscoveryDocumentValidation: false,
+  requireHttps: true,
 };
 
 export const environment = {

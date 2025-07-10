@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trabalho1-authserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trabalho1-authserver
+  template:
+    metadata:
+      labels:
+        app: trabalho1-authserver
+    spec:
+      containers:
+      - name: trabalho1-authserver
+        image: lucasjjgg/trabalho1-authserver:latest
+        imagePullPolicy: Always
+        env:
+        - name: ASPNETCORE_URLS
+          value: "https://+:8081;http://+:8080"
+        - name: App__SelfUrl
+          value: "https://trabalho1-authserver:8081"
+        - name: App__CorsOrigins
+          value: "https://trabalho1-angular:443,https://trabalho1-api:8081,https://k8s.local:31475"
+        - name: App__HealthCheckUrl
+          value: "http://trabalho1-authserver:8080/health-status"
+        - name: App__AngularUrl
+          value: "https://k8s.local:31475/"
+        - name: AuthServer__RequireHttpsMetadata
+          value: "true"
+        - name: AuthServer__Authority
+          value: "https://k8s.local:31475/"
+        - name: Kestrel__Certificates__Default__Path
+          value: "/app/certs/localhost.pfx"
+        - name: Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: trabalho1-secrets
+              key: certificate-password
+        - name: ConnectionStrings__Default
+          value: "User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=Trabalho1;Pooling=false"
+        - name: Redis__Configuration
+          value: "redis"
+        volumeMounts:
+        - name: certs
+          mountPath: /app/certs
+          readOnly: true
+      volumes:
+      - name: certs
+        secret:
+          secretName: trabalho1-secrets
+          items:
+          - key: localhost-pfx
+            path: localhost.pfx

@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrator
+spec:
+  template:
+    spec:
+      containers:
+      - name: db-migrator
+        image: lucasjjgg/trabalho1-db-migrator:latest
+        env:
+        - name: OpenIddict__Applications__Trabalho1_App__RootUrl
+          value: "https://k8s.local:31475/"
+        - name: OpenIddict__Applications__Trabalho1_Swagger__RootUrl
+          value: "http://trabalho1-api:8080"
+        - name: ConnectionStrings__Default
+          value: "User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=Trabalho1;Pooling=false"
+        - name: Redis__Configuration
+          value: "redis"
+      restartPolicy: OnFailure

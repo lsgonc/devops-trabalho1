@@ -57,6 +57,7 @@ using Volo.Abp.Account.Localization;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Studio.Client.AspNetCore;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Devops.Trabalho1;
 
@@ -133,6 +134,17 @@ public class Trabalho1AuthServerModule : AbpModule
                 
             });
         }
+
+        context.Services.ConfigureApplicationCookie(options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(3);
+            options.SlidingExpiration = true;
+            options.Events.OnSigningIn = cookie =>
+            {
+                cookie.Properties.IsPersistent = true;
+                return Task.CompletedTask;
+            };
+        });
 
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
 

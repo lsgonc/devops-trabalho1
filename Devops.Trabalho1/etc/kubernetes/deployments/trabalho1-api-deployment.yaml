@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trabalho1-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trabalho1-api
+  template:
+    metadata:
+      labels:
+        app: trabalho1-api
+    spec:
+      containers:
+        - name: trabalho1-api
+          image: lucasjjgg/trabalho1-api:latest
+          ports:
+            - containerPort: 8081  # HTTPS
+            - containerPort: 8080  # HTTP
+          env:
+            - name: ASPNETCORE_URLS
+              value: "https://+:8081;http://+:8080"
+            - name: Kestrel__Certificates__Default__Path
+              value: /app/certs/localhost.pfx
+            - name: Kestrel__Certificates__Default__Password
+              valueFrom:
+                secretKeyRef:
+                  name: trabalho1-secrets
+                  key: certificate-password
+            - name: App__SelfUrl
+              value: "https://trabalho1-api:8081"
+            - name: App__AngularUrl
+              value: "https://trabalho1-angular:443"
+            - name: App__CorsOrigins
+              value: "https://trabalho1-authserver:8081,https://localhost:8081,https://trabalho1-angular:443,https://localhost:4200"
+            - name: App__HealthCheckUrl
+              value: "http://trabalho1-api:8080/health-status"
+            - name: AuthServer__RequireHttpsMetadata
+              value: "true"
+            - name: AuthServer__Authority
+              value: "https://localhost:443"
+            - name: AuthServer__MetaAddress
+              value: "https://trabalho1-authserver:8081"
+            - name: ConnectionStrings__Default
+              value: "User ID=postgres;Password=myPassw0rd;Host=postgres;Port=5432;Database=Trabalho1;Pooling=false"
+            - name: Redis__Configuration
+              value: "redis"
+          volumeMounts:
+            - name: certs-volume
+              mountPath: /app/certs
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /health-status
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health-status
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+          - name: certs
+            mountPath: /app/certs
+            readOnly: true
+      volumes:
+      - name: certs
+        secret:
+          secretName: trabalho1-secrets
+          items:
+          - key: localhost-pfx
+            path: localhost.pfx
+      restartPolicy: Always

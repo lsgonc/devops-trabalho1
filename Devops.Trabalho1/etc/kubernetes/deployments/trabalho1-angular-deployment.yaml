@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trabalho1-angular
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trabalho1-angular
+  template:
+    metadata:
+      labels:
+        app: trabalho1-angular
+    spec:
+      containers:
+        - name: angular
+          image: lucasjjgg/trabalho1-angular:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 443
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /etc/ssl
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 443
+              scheme: HTTPS
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 5
+      volumes:
+        - name: ssl-certs
+          hostPath:    
+            path: /certs
+            type: Directory
