@@ -175,7 +175,7 @@ apps:
       - name: ConnectionStrings__Default
         value: "User ID=postgres;Password=myPassw0rd;Host=trabalho1-postgres;Port=5432;Database=Trabalho1;Pooling=false"
       - name: Redis__Configuration
-        value: "trabalho-1-redis:6379,abortConnect=false"
+        value: "trabalho1-redis:6379"
     volumeMounts:
       - name: certs
         mountPath: /app/certs
@@ -201,6 +201,20 @@ apps:
           port: 8081
           targetPort: 8081
           protocol: TCP
+    initContainers:
+      - name: wait-for-postgres
+        image: postgres:14.1
+        command: ["sh", "-c", "until pg_isready -h postgres -p 5432 -U postgres; do echo waiting for postgres; sleep 2; done"]
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: trabalho1-secrets
+                key: postgres-password
+
+      - name: wait-for-redis
+        image: redis:alpine
+        command: ["sh", "-c", "until redis-cli -h redis ping | grep PONG; do echo waiting for redis; sleep 2; done"]
 
   - name: authserver
     enabled: true
@@ -241,7 +255,7 @@ apps:
       - name: ConnectionStrings__Default
         value: "User ID=postgres;Password=myPassw0rd;Host=trabalho1-postgres;Port=5432;Database=Trabalho1;Pooling=false"
       - name: Redis__Configuration
-        value: "trabalho1-redis:6379,abortConnect=false"
+        value: "trabalho1-redis:6379"
     volumeMounts:
       - name: certs
         mountPath: /app/certs
@@ -267,6 +281,21 @@ apps:
           port: 8081
           targetPort: 8081
           protocol: TCP
+    initContainers:
+      - name: wait-for-postgres
+        image: postgres:14.1
+        command: ["sh", "-c", "until pg_isready -h postgres -p 5432 -U postgres; do echo waiting for postgres; sleep 2; done"]
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: trabalho1-secrets
+                key: postgres-password
+
+      - name: wait-for-redis
+        image: redis:alpine
+        command: ["sh", "-c", "until redis-cli -h redis ping | grep PONG; do echo waiting for redis; sleep 2; done"]
+
 
 ingress:
   enabled: true
@@ -298,3 +327,13 @@ dbMigrator:
   rootUrl: "https://k8s.local:31475/"
   swaggerUrl: "http://trabalho1-api:8080"
   dbName: "Trabalho1"
+  initContainers:
+    - name: wait-for-postgres
+      image: postgres:14.1
+      command: ['sh', '-c', 'until pg_isready -h trabalho1-postgres -p 5432 -U postgres; do echo waiting for postgres; sleep 2; done;']
+      env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: trabalho1-secrets
+              key: postgres-password
