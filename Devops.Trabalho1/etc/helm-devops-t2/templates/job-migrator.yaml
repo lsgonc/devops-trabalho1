@@ -1,0 +1,39 @@
+{{- if .Values.dbMigrator.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-db-migrator
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  # annotations:
+    # --- HELM HOOKS (TEMPORARIAMENTE DESATIVADOS PARA DEBUG) ---
+    # "helm.sh/hook": pre-install,pre-upgrade
+    # "helm.sh/hook-weight": "-5"
+    # "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  activeDeadlineSeconds: 300
+  template:
+    spec:
+      containers:
+      - name: db-migrator
+        image: "{{ .Values.dbMigrator.image.repository }}:{{ .Values.dbMigrator.image.tag }}"
+        imagePullPolicy: {{ .Values.dbMigrator.image.pullPolicy }}
+        env:
+        - name: OpenIddict__Applications__Trabalho1_App__RootUrl
+          value: {{ .Values.dbMigrator.rootUrl | quote }}
+        - name: OpenIddict__Applications__Trabalho1_Swagger__RootUrl
+          value: "http://{{ .Release.Name }}-trabalho1-api:8080"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "{{ .Release.Name }}-trabalho1-secrets"
+              key: postgres-password
+        - name: ConnectionStrings__Default
+          value: "User ID=postgres;Password=$(POSTGRES_PASSWORD);Host={{ .Release.Name }}-postgres;Port=5432;Database={{ .Values.dbMigrator.dbName }};Pooling=false"
+        - name: Redis__Configuration
+          value: "{{ .Release.Name }}-redis"
+      restartPolicy: OnFailure
+  backoffLimit: 1
+{{- end }}

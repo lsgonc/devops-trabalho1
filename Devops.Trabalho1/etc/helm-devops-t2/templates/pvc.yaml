@@ -1,0 +1,26 @@
+{{- /* Inicia um loop por cada app definido em .Values.apps */}}
+{{- range .Values.apps }}
+{{- /* Verifica se o app está habilitado E se a seção 'persistence' está definida e habilitada */}}
+{{- if and .enabled .persistence .persistence.enabled }}
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $.Release.Name }}-{{ .name }}-pvc
+  labels:
+    app: {{ $.Release.Name }}-{{ .name }}
+    helm.sh/chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+spec:
+  accessModes:
+{{ toYaml .persistence.accessModes | indent 4 }}
+  {{- /* Adiciona a storageClassName se ela for definida no values.yaml */}}
+  {{- if .persistence.storageClass }}
+  storageClassName: {{ .persistence.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .persistence.size }}
+{{- end }}
+{{- end }}

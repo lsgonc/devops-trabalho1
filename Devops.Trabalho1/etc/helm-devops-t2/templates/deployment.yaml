@@ -1,0 +1,70 @@
+{{- /* Inicia um loop por cada app definido em .Values.apps */}}
+{{- range .Values.apps }}
+{{- if .enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ .name }}
+  labels:
+    app: {{ $.Release.Name }}-{{ .name }}
+    helm.sh/chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $.Release.Name }}-{{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $.Release.Name }}-{{ .name }}
+    spec:
+      {{- if or (eq .name "trabalho1-api") (eq .name "trabalho1-authserver") }}
+      initContainers:
+      - name: wait-for-redis
+        image: busybox:1.36
+        command: ['sh', '-c', 'until nc -z -v -w30 {{ $.Release.Name }}-redis 6379; do echo "Aguardando o serviço do Redis ficar disponível..."; sleep 2; done;']
+      {{- end }}
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          {{- /* Se houver um comando definido no values.yaml, ele será incluído aqui */}}
+          {{- if .command }}
+          command:
+{{ toYaml .command | indent 12 }}
+          {{- end }}
+          ports:
+{{ toYaml .ports | indent 12 }}
+          {{- /* A função "tpl" processa strings como templates, resolvendo variáveis como $.Release.Name dentro delas */}}
+          {{- /* A função "toYaml" converte a estrutura do values.yaml para YAML, simplificando o template */}}
+          env:
+{{ tpl (toYaml .env) $ | indent 12 }}
+          {{- if .probes }}
+          {{- if .probes.readiness }}
+          readinessProbe:
+{{ toYaml .probes.readiness | indent 12 }}
+          {{- end }}
+          {{- if .probes.liveness }}
+          livenessProbe:
+{{ toYaml .probes.liveness | indent 12 }}
+          {{- end }}
+          {{- end }}
+          {{- if .volumeMounts }}
+          volumeMounts:
+{{ toYaml .volumeMounts | indent 12 }}
+          {{- end }}
+      {{- if .volumes }}
+      volumes:
+      {{- range .volumes }}
+        - name: {{ .name }}
+          {{- /* Aqui, renderizamos dinamicamente o tipo de volume (pvc, secret, hostPath, etc) */}}
+{{ tpl (toYaml .spec) $ | indent 10 }}
+      {{- end }}
+      {{- end }}
+      {{- /* Se você não definiu restartPolicy no seu YAML original, "Always" é o padrão. */}}
+      restartPolicy: Always
+{{- end }}
+{{- end }}

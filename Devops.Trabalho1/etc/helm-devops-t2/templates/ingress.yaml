@@ -1,0 +1,47 @@
+{{- /* Só cria o Ingress se .Values.ingress.enabled for true */}}
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels:
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- /* Adiciona as anotações do values.yaml se elas existirem */}}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- /* Adiciona a IngressClassName se ela for definida no values.yaml */}}
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- /* Adiciona a configuração de TLS se ela for definida */}}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- tpl (toYaml .Values.ingress.tls) . | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- /* Inicia o loop por cada host definido em .Values.ingress.hosts */}}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- /* Inicia o loop por cada path definido para o host atual */}}
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $.Release.Name }}-{{ .backend.service.name }}
+                port:
+                  {{- if .backend.service.port.name }}
+                  name: {{ .backend.service.port.name }}
+                  {{- else if .backend.service.port.number }}
+                  number: {{ .backend.service.port.number }}
+                  {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}

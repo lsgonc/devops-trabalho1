@@ -1,0 +1,303 @@
+apps:
+  - name: postgres
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: postgres
+      tag: "14.1"
+      pullPolicy: IfNotPresent
+    ports:
+      - name: postgres
+        containerPort: 5432
+    env:
+      - name: POSTGRES_USER
+        value: "postgres"
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: "{{ .Release.Name }}-trabalho1-secrets"
+            key: postgres-password
+    probes:
+      readiness:
+        exec:
+          command: ["pg_isready", "-U", "postgres"]
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 5
+      liveness:
+        exec:
+          command: ["pg_isready", "-U", "postgres"]
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 5
+    volumeMounts:
+      - name: postgres-storage
+        mountPath: /var/lib/postgresql/data
+    volumes:
+      - name: postgres-storage
+        spec:
+          persistentVolumeClaim:
+            claimName: "{{ $.Release.Name }}-postgres-pvc"
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        - name: tcp-postgres
+          port: 5432
+          targetPort: 5432
+          protocol: TCP
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 1Gi
+
+  - name: redis
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: redis
+      tag: "alpine"
+      pullPolicy: IfNotPresent
+    ports:
+      - name: redis
+        containerPort: 6379
+    command: ["redis-server"]
+    probes:
+      readiness:
+        exec:
+          command: ["redis-cli", "ping"]
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        timeoutSeconds: 3
+        failureThreshold: 3
+      liveness:
+        exec:
+          command: ["redis-cli", "ping"]
+        initialDelaySeconds: 10
+        periodSeconds: 15
+        timeoutSeconds: 3
+        failureThreshold: 5
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        - name: tcp-redis
+          port: 6379
+          targetPort: 6379
+          protocol: TCP
+
+  - name: trabalho1-angular
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: lucasjjgg/trabalho1-angular
+      tag: "latest"
+      pullPolicy: Always
+    ports:
+      - name: https
+        containerPort: 443
+    probes:
+      readiness:
+        httpGet:
+          path: /
+          port: 443
+          scheme: HTTPS
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        timeoutSeconds: 3
+        failureThreshold: 5
+    volumeMounts:
+      - name: ssl-certs
+        mountPath: /etc/ssl
+    volumes:
+      - name: ssl-certs
+        spec:
+          hostPath:    
+            path: /certs
+            type: Directory
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        - name: https
+          port: 443
+          targetPort: 443
+          protocol: TCP
+
+  - name: trabalho1-api
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: lucasjjgg/trabalho1-api
+      tag: "latest"
+      pullPolicy: Always
+    ports:
+      - name: https
+        containerPort: 8081
+      - name: http
+        containerPort: 8080
+    env:
+      - name: ASPNETCORE_URLS
+        value: "https://+:8081;http://+:8080"
+      - name: Kestrel__Certificates__Default__Path
+        value: /app/certs/localhost.pfx
+      - name: Kestrel__Certificates__Default__Password
+        valueFrom:
+          secretKeyRef:
+            name: "{{ $.Release.Name }}-trabalho1-secrets"
+            key: certificate-password
+      - name: App__SelfUrl
+        value: "https://{{ $.Release.Name }}-trabalho1-api:8081"
+      - name: App__AngularUrl
+        value: "https://k8s.local:31475/"
+      - name: App__CorsOrigins
+        value: "https://{{ $.Release.Name }}-trabalho1-authserver:8081,https://localhost:8081,https://{{ $.Release.Name }}-trabalho1-angular:443,https://localhost:4200"
+      - name: App__HealthCheckUrl
+        value: "http://{{ $.Release.Name }}-trabalho1-api:8080/health-status"
+      - name: AuthServer__RequireHttpsMetadata
+        value: "true"
+      - name: AuthServer__Authority
+        value: "https://k8s.local:31475/"
+      - name: AuthServer__MetaAddress
+        value: "https://{{ $.Release.Name }}-trabalho1-authserver:8081"
+      - name: ConnectionStrings__Default
+        value: "User ID=postgres;Password=myPassw0rd;Host={{ $.Release.Name }}-postgres;Port=5432;Database=Trabalho1;Pooling=false"
+      - name: Redis__Configuration
+        value: "{{ $.Release.Name }}-redis:6379,abortConnect=false"
+    probes:
+      readiness:
+        httpGet:
+          path: /health-status
+          port: 8080
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        failureThreshold: 3
+      liveness:
+        httpGet:
+          path: /health-status
+          port: 8080
+        initialDelaySeconds: 30
+        periodSeconds: 30
+    volumeMounts:
+      - name: certs
+        mountPath: /app/certs
+        readOnly: true
+    volumes:
+      - name: certs
+        spec:
+          secret:
+            secretName: "{{ $.Release.Name }}-trabalho1-secrets"
+            items:
+            - key: localhost-pfx
+              path: localhost.pfx
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+          targetPort: 8080
+          protocol: TCP
+        - name: https
+          port: 8081
+          targetPort: 8081
+          protocol: TCP
+
+  - name: trabalho1-authserver
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: lucasjjgg/trabalho1-authserver
+      tag: "latest"
+      pullPolicy: Always
+    ports:
+      - name: https
+        containerPort: 8081
+      - name: http
+        containerPort: 8080
+    env:
+      - name: ASPNETCORE_URLS
+        value: "https://+:8081;http://+:8080"
+      - name: App__SelfUrl
+        value: "https://{{ $.Release.Name }}-trabalho1-authserver:8081"
+      - name: App__CorsOrigins
+        value: "https://{{ $.Release.Name }}-trabalho1-angular:443,https://{{ $.Release.Name }}-trabalho1-api:8081,https://k8s.local:31475"
+      - name: App__HealthCheckUrl
+        value: "http://{{ $.Release.Name }}-trabalho1-authserver:8080/health-status"
+      - name: App__AngularUrl
+        value: "https://k8s.local:31475/"
+      - name: App__RedirectAllowedUrls
+        value: "https://k8s.local:31475/"
+      - name: AuthServer__RequireHttpsMetadata
+        value: "true"
+      - name: AuthServer__Authority
+        value: "https://k8s.local:31475/"
+      - name: Kestrel__Certificates__Default__Path
+        value: "/app/certs/localhost.pfx"
+      - name: Kestrel__Certificates__Default__Password
+        valueFrom:
+          secretKeyRef:
+            name: "{{ $.Release.Name }}-trabalho1-secrets"
+            key: certificate-password
+      - name: ConnectionStrings__Default
+        value: "User ID=postgres;Password=myPassw0rd;Host={{ $.Release.Name }}-postgres;Port=5432;Database=Trabalho1;Pooling=false"
+      - name: Redis__Configuration
+        value: "{{ $.Release.Name }}-redis:6379,abortConnect=false"
+    volumeMounts:
+      - name: certs
+        mountPath: /app/certs
+        readOnly: true
+    volumes:
+      - name: certs
+        spec:
+          secret:
+            secretName: "{{ $.Release.Name }}-trabalho1-secrets"
+            items:
+              - key: localhost-pfx
+                path: localhost.pfx
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+          targetPort: 8080
+          protocol: TCP
+        - name: https
+          port: 8081
+          targetPort: 8081
+          protocol: TCP
+
+ingress:
+  enabled: true
+  className: "" 
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  hosts:
+    - host: k8s.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: trabalho1-angular 
+              port:
+                number: 443 
+  tls:
+    - hosts:
+        - k8s.local
+      secretName: "{{ .Release.Name }}-trabalho1-certs-secrets"
+
+dbMigrator:
+  enabled: true
+  image:
+    repository: lucasjjgg/trabalho1-db-migrator
+    tag: latest
+    pullPolicy: Always
+  rootUrl: "https://k8s.local:31475/"
+  swaggerUrl: "http://trabalho1-api:8080"
+  dbName: "Trabalho1"
