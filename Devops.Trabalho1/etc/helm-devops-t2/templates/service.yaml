@@ -1,23 +1,23 @@
-{{- /* Inicia um loop por cada app definido em .Values.apps */}}
 {{- range .Values.apps }}
-{{- /* Verifica se o app está habilitado E se a seção 'service' está definida e habilitada */}}
-{{- if and .enabled .service .service.enabled }}
+{{- if and .enabled .service.enabled }}
 
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $.Release.Name }}-{{ .name }}
+  name: {{ $.Release.Name }}-{{ .service.name }}
   labels:
-    app: {{ $.Release.Name }}-{{ .name }}
-    helm.sh/chart: {{ $.Chart.Name }}-{{ $.Chart.Version }}
-    app.kubernetes.io/managed-by: {{ $.Release.Service }}
-    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app: {{ .name }}
 spec:
   type: {{ .service.type }}
   selector:
-    app: {{ $.Release.Name }}-{{ .name }}
+    app: trabalho1-{{ .name }}
   ports:
-{{- /* Usamos toYaml para renderizar a lista de portas definida no values.yaml */}}
-{{ toYaml .service.ports | indent 4 }}
+    {{- range .service.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol }}
+    {{- end }}
 {{- end }}
 {{- end }}

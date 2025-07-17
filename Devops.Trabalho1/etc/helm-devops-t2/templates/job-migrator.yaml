@@ -28,12 +28,12 @@ spec:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: "{{ .Release.Name }}-trabalho1-secrets"
+              name: "trabalho1-secrets"
               key: postgres-password
         - name: ConnectionStrings__Default
           value: "User ID=postgres;Password=$(POSTGRES_PASSWORD);Host={{ .Release.Name }}-postgres;Port=5432;Database={{ .Values.dbMigrator.dbName }};Pooling=false"
         - name: Redis__Configuration
           value: "{{ .Release.Name }}-redis"
       restartPolicy: OnFailure
-  backoffLimit: 1
+  backoffLimit: 2
 {{- end }}
