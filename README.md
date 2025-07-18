@@ -1,4 +1,4 @@
-# DevOps - T1
+# DevOps - T1 e T2
 
 | Nome                    | RA     |
 |-------------------------|--------|
@@ -64,4 +64,47 @@ Abaixo, descrevemos a funcionalidade de cada serviço e seus relacionamentos:
    - Relacionamentos:
      - Utilizado por trabalho1-api, trabalho1-authserver e db-migrator para caching, tokens, etc.
      - Também possui healthcheck configurado.
-  
+
+<br>
+
+## 🚢 Kubernetes (Minikube) e Helm
+Além da criação e execução dos containers, a segunda etapa deste trabalho envolveu a orquestração da aplicação utilizando Kubernetes. Para simular um ambiente de cluster local, foi utilizado o **Minikube**, permitindo testes e validações em um ambiente controlado.
+
+O gerenciamento dos pacotes da aplicação foi realizado com o uso do **Helm**, facilitando a implantação, atualização e versionamento dos recursos no cluster Kubernetes de forma padronizada e eficiente.
+
+<br>
+
+### 1. Pré-requisitos
+Antes de começar, garanta que você tenha as seguintes ferramentas instaladas e configuradas em sua máquina:
+
+- **Minikube**: A ferramenta que cria um cluster Kubernetes de um único nó na sua máquina. [Instalação do Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Flinux%2Fx86-64%2Fstable%2Fbinary+download)
+- **kubectl**: A interface de linha de comando para interagir com o cluster Kubernetes. Geralmente é instalado junto com o Docker Desktop ou pode ser instalado separadamente: [Instalação do kubectl](https://kubernetes.io/docs/tasks/tools/)
+- **Helm**: O gerenciador de pacotes para o Kubernetes. [Instalação do Helm](https://helm.sh/docs/intro/install/)
+
+<br>
+
+### 2. Quick start
+Para inicializar o ambiente local de desenvolvimento utilizando Minikube e Helm, execute os seguintes comandos no terminal a partir da raiz do projeto:
+
+```
+chmod +x start.sh
+./start.sh
+```
+<br>
+
+Este script realiza automaticamente:
+- A verificação das dependências necessárias (minikube, kubectl, helm);
+- A inicialização do Minikube com o perfil trabalho1;
+- A habilitação dos addons essenciais;
+- O carregamento das imagens Docker diretamente no Minikube;
+- A criação de Secrets utilizados pela aplicação;
+- A configuração do domínio k8s.local no arquivo /etc/hosts;
+- A implantação da aplicação via Helm, utilizando o chart localizado em Devops.Trabalho1/etc/helm-devops-t2.
+
+<br>
+
+> ℹ️ Observação: É necessário fornecer a senha de administrador (sudo) durante a execução para que o script possa editar o arquivo /etc/hosts.
+
+<br>
+
+Após a execução, a aplicação estará acessível em: https://k8s.local.
