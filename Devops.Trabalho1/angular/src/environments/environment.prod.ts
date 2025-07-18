@@ -1,9 +1,9 @@
 import { Environment } from '@abp/ng.core';
 
-const baseUrl = 'https://k8s.local:31475';
+const baseUrl = 'https://k8s.local';
 
 const oAuthConfig = {
-  issuer: 'https://k8s.local:31475/',
+  issuer: 'https://k8s.local/',
   redirectUri: window.location.origin + '/',
   clientId: 'Trabalho1_App',
   dummyClientSecret: '',
